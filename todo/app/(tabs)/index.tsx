@@ -11,9 +11,9 @@ export default function HomeScreen() {
         </Text>
         <View style={styles.items}>
           {/* Task items will go here */}
-          <Tasks/>
-          <Tasks/>
-          <Tasks/>
+          <Tasks text={'Task 1'}/>
+          <Tasks text={'Task 2'}/>
+          <Tasks text={'Task 3'}/>
         </View>
       </View>
     </View>
@@ -35,5 +35,7 @@ const styles = StyleSheet.create({
   },
   items: {
     // Add styles here for your items if needed
+    marginTop:30,
+    
   },
 });
