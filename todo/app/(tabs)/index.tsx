@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Text, View, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, Keyboard } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
-import Task from './Components/Task';
+import Task from '../Components/Task';
 
 export default function HomeScreen() {
   const [task, setTask] = useState(''); // Input field state
@@ -9,14 +9,17 @@ export default function HomeScreen() {
 
   // Function to add a task to the taskItems array
   const handleAddTask = () => {
-    Keyboard.dismiss();
+    if (task.trim()) { // Check if task is not empty
+      Keyboard.dismiss();
       setTaskItems([...taskItems, task]); // Add new task
       setTask(''); // Clear input field
+    }
   };
 
-  const completeTask = (index) =>{
+  // Function to remove a task
+  const completeTask = (index) => {
     let itemsCopy = [...taskItems];
-    itemsCopy.splice(index,1);
+    itemsCopy.splice(index, 1);
     setTaskItems(itemsCopy);
   }
 
@@ -26,15 +29,11 @@ export default function HomeScreen() {
         <Text style={styles.sectionTitle}>Today's tasks</Text>
         <View style={styles.items}>
           {/* Dynamically render task items */}
-          {taskItems.map((item, index) => {
-            return(
-              <TouchableOpacity key={index} onPress={()=>completeTask(index)}>
-                    <Task  text={item} /> 
+          {taskItems.map((item, index) => (
+            <TouchableOpacity key={index} onPress={() => completeTask(index)}>
+              <Task text={item} />
             </TouchableOpacity>
-            )
-            
-            
-          })}
+          ))}
         </View>
       </View>
 
