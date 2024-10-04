@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, Keyboard } from 'react-native';
-import { TextInput } from 'react-native-gesture-handler';
+import { Text, View, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, Keyboard, TextInput,Image } from 'react-native';
 import Task from '../Components/Task';
 
 export default function HomeScreen() {
@@ -25,6 +24,13 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
+      <View style={styles.head}>
+        <Image
+          source={require('../../assets/images/to-do.png')} // Path to your image file
+          style={styles.image}
+        />
+        <Text style={styles.headText}>ToDo</Text>
+      </View>
       <View style={styles.taskWrapper}>
         <Text style={styles.sectionTitle}>Today's tasks</Text>
         <View style={styles.items}>
@@ -49,7 +55,10 @@ export default function HomeScreen() {
         />
         <TouchableOpacity onPress={handleAddTask}>
           <View style={styles.addWrapper}>
-            <Text style={styles.addText}>+</Text>
+          <Image
+            source={require('../../assets/images/add.png')} // Path to your image file
+            style={styles.btnImg}
+          />
           </View>
         </TouchableOpacity>
       </KeyboardAvoidingView>
@@ -61,6 +70,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#e8eaed',
+  },
+  head:{
+    flexDirection:'row',
+    alignItems:'flex-end',
+    justifyContent:'center',
+    marginTop:20,
+    width:'100%',
+    gap:10,
+  },
+  image: {
+    width: 30,  // Set your desired width
+    height: 30, // Set your desired height
+  },
+  headText:{
+    fontSize:28,
+    fontWeight:'700',
+    margin:0,
   },
   taskWrapper: {
     paddingTop: 80,
@@ -91,14 +117,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   addWrapper: {
-    width: 60,
-    height: 60,
+    width: 50,
+    height: 50,
     backgroundColor: '#ffffff',
     borderRadius: 60,
     justifyContent: 'center',
     alignItems: 'center',
     borderColor: '#c0c0c0',
     borderWidth: 1,
+  },
+  btnImg:{
+    width:40,
+    height:40,
+    borderRadius:50,
   },
   addText: {
     fontSize: 24,
