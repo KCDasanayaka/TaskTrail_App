@@ -36,7 +36,7 @@ export default function HomeScreen() {
         <View style={styles.items}>
           {/* Dynamically render task items */}
           {taskItems.map((item, index) => (
-            <TouchableOpacity key={index} onPress={() => completeTask(index)}>
+            <TouchableOpacity key={index} >
               <Task text={item} />
             </TouchableOpacity>
           ))}
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
     flexDirection:'row',
     alignItems:'flex-end',
     justifyContent:'center',
-    marginTop:20,
+    marginTop:45,
     width:'100%',
     gap:10,
   },
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     margin:0,
   },
   taskWrapper: {
-    paddingTop: 80,
+    paddingTop: 60,
     paddingHorizontal: 20,
   },
   sectionTitle: {
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   writeTaskWrapper: {
     position: 'absolute',
-    bottom: 60,
+    bottom: 20,
     width: '100%',
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -110,15 +110,15 @@ const styles = StyleSheet.create({
   input: {
     paddingVertical: 15,
     paddingHorizontal: 15,
-    width: 250,
+    width: 280,
     backgroundColor: '#FFFFFF',
     borderRadius: 60,
     borderColor: '#c0c0c0',
     borderWidth: 1,
   },
   addWrapper: {
-    width: 50,
-    height: 50,
+    width: 60,
+    height: 60,
     backgroundColor: '#ffffff',
     borderRadius: 60,
     justifyContent: 'center',
@@ -127,8 +127,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   btnImg:{
-    width:40,
-    height:40,
+    width:50,
+    height:50,
     borderRadius:50,
   },
   addText: {
