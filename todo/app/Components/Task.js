@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { DateTimePickerModal } from 'react-native-modal-datetime-picker';
 
-const Task = (props) => {
-  const [taskItems, setTaskItems] = useState([]); // List of tasks
+const Task = ({ text, onDelete }) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false); // Date picker visibility
   const [reminderTime, setReminderTime] = useState(''); // State to store selected time
 
-  // Function to handle time picker visibility
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
@@ -16,7 +14,6 @@ const Task = (props) => {
     setDatePickerVisibility(false);
   };
 
-  // Function to handle time selection
   const handleConfirm = (date) => {
     const hours = date.getHours();
     const minutes = date.getMinutes();
@@ -27,21 +24,14 @@ const Task = (props) => {
     console.log('Reminder set for:', formattedTime);
   };
 
-  const completeTask = (index) => {
-    let itemsCopy = [...taskItems];
-    itemsCopy.splice(index, 1);
-    setTaskItems(itemsCopy);
-  };
-
   return (
     <View style={styles.task}>
       <View style={styles.taskLeft}>
         <View style={styles.square}></View>
-        <Text style={styles.text}>{props.text}</Text>
+        <Text style={styles.text}>{text}</Text>
       </View>
       <View style={styles.iconsBox}>
         <View style={styles.taskRight}>
-          {/* TouchableOpacity to show the time picker */}
           <TouchableOpacity onPress={showDatePicker}>
             <View style={styles.notify}>
               <Image
@@ -51,14 +41,13 @@ const Task = (props) => {
             </View>
           </TouchableOpacity>
 
-          {/* Display the selected reminder time */}
           {reminderTime ? (
             <Text style={styles.reminderText}>{reminderTime}</Text>
           ) : null}
         </View>
 
         {/* Close Icon */}
-        <TouchableOpacity onPress={() => console.log('Task removed')}>
+        <TouchableOpacity onPress={onDelete}>
           <Image
             source={require('../../assets/images/close.png')}
             style={styles.closeImg}
@@ -135,7 +124,7 @@ const styles = StyleSheet.create({
     height: 25,
   },
   reminderText: {
-    marginLeft: 10,
+    marginLeft: 20,
     fontSize: 14,
     color: '#555',
   },
