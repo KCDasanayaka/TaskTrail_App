@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
-import { DateTimePickerModal } from 'react-native-modal-datetime-picker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
-const Task = ({ text, onDelete }) => {
+const Task = (props) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false); // Date picker visibility
   const [reminderTime, setReminderTime] = useState(''); // State to store selected time
 
+  // Function to handle time picker visibility
   const showDatePicker = () => {
     setDatePickerVisibility(true);
   };
@@ -14,6 +15,7 @@ const Task = ({ text, onDelete }) => {
     setDatePickerVisibility(false);
   };
 
+  // Function to handle time selection
   const handleConfirm = (date) => {
     const hours = date.getHours();
     const minutes = date.getMinutes();
@@ -28,10 +30,11 @@ const Task = ({ text, onDelete }) => {
     <View style={styles.task}>
       <View style={styles.taskLeft}>
         <View style={styles.square}></View>
-        <Text style={styles.text}>{text}</Text>
+        <Text style={styles.text}>{props.text}</Text>
       </View>
       <View style={styles.iconsBox}>
         <View style={styles.taskRight}>
+          {/* TouchableOpacity to show the time picker */}
           <TouchableOpacity onPress={showDatePicker}>
             <View style={styles.notify}>
               <Image
@@ -41,13 +44,14 @@ const Task = ({ text, onDelete }) => {
             </View>
           </TouchableOpacity>
 
+          {/* Display the selected reminder time */}
           {reminderTime ? (
             <Text style={styles.reminderText}>{reminderTime}</Text>
           ) : null}
         </View>
 
-        {/* Close Icon */}
-        <TouchableOpacity onPress={onDelete}>
+        {/* Close Icon with onPress to call the onDelete prop */}
+        <TouchableOpacity onPress={props.onDelete}>
           <Image
             source={require('../../assets/images/close.png')}
             style={styles.closeImg}
@@ -85,7 +89,6 @@ const styles = StyleSheet.create({
   taskLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    flexWrap: 'wrap',
   },
   square: {
     width: 24,

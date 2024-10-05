@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, StyleSheet, KeyboardAvoidingView, Platform, TouchableOpacity, Keyboard, TextInput,Image } from 'react-native';
+import { View, StyleSheet, Text, KeyboardAvoidingView, Platform, TouchableOpacity, Keyboard, TextInput, Image } from 'react-native';
 import Task from '../Components/Task';
 
 export default function HomeScreen() {
@@ -20,7 +20,7 @@ export default function HomeScreen() {
     let itemsCopy = [...taskItems];
     itemsCopy.splice(index, 1);
     setTaskItems(itemsCopy);
-  }
+  };
 
   return (
     <View style={styles.container}>
@@ -36,8 +36,8 @@ export default function HomeScreen() {
         <View style={styles.items}>
           {/* Dynamically render task items */}
           {taskItems.map((item, index) => (
-            <TouchableOpacity key={index} >
-              <Task text={item} />
+            <TouchableOpacity key={index}>
+              <Task text={item} onDelete={() => completeTask(index)} /> {/* Pass completeTask as onDelete prop */}
             </TouchableOpacity>
           ))}
         </View>
@@ -55,10 +55,10 @@ export default function HomeScreen() {
         />
         <TouchableOpacity onPress={handleAddTask}>
           <View style={styles.addWrapper}>
-          <Image
-            source={require('../../assets/images/add.png')} // Path to your image file
-            style={styles.btnImg}
-          />
+            <Image
+              source={require('../../assets/images/add.png')} // Path to your image file
+              style={styles.btnImg}
+            />
           </View>
         </TouchableOpacity>
       </KeyboardAvoidingView>
@@ -71,22 +71,22 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#e8eaed',
   },
-  head:{
-    flexDirection:'row',
-    alignItems:'flex-end',
-    justifyContent:'center',
-    marginTop:45,
-    width:'100%',
-    gap:10,
+  head: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'center',
+    marginTop: 45,
+    width: '100%',
+    gap: 10,
   },
   image: {
     width: 30,  // Set your desired width
     height: 30, // Set your desired height
   },
-  headText:{
-    fontSize:28,
-    fontWeight:'700',
-    margin:0,
+  headText: {
+    fontSize: 28,
+    fontWeight: '700',
+    margin: 0,
   },
   taskWrapper: {
     paddingTop: 60,
@@ -126,13 +126,10 @@ const styles = StyleSheet.create({
     borderColor: '#c0c0c0',
     borderWidth: 1,
   },
-  btnImg:{
-    width:50,
-    height:50,
+  btnImg: {
+    width: 50,
+    height: 50,
     borderRadius:50,
   },
-  addText: {
-    fontSize: 24,
-    color: '#55BCF6',
-  },
 });
+
