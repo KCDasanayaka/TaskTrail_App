@@ -1,28 +1,47 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import { Notifications } from 'react-native-notifications';
 
 const Task = (props) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [reminderTime, setReminderTime] = useState('');
+  const [selectedTime, setSelectedTime] = useState(null); // Store selected time
 
+  // Show Date Picker
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
 
+  // Handle date confirmation
   const handleConfirm = (date) => {
     const hours = date.getHours();
     const minutes = date.getMinutes();
     const ampm = hours >= 12 ? 'PM' : 'AM';
     const formattedTime = `${hours % 12 || 12}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
     setReminderTime(formattedTime);
+    setSelectedTime(date); // Save selected time
     hideDatePicker();
+    scheduleNotification(date); // Schedule notification after time is set
+  };
+
+  // Schedule a notification 5 minutes before the reminder time
+  const scheduleNotification = (date) => {
+    const notificationTime = new Date(date.getTime() - 5 * 60 * 1000); // 5 minutes before
+
+    Notifications.postLocalNotification({
+      title: 'Reminder',
+      body: `You have a task: "${props.text}" due soon!`,
+      id: `reminder-${Date.now()}`, // Unique ID for the notification
+      silent: false,
+      fireDate: notificationTime.toISOString(), // Set the time to trigger the notification
+    });
   };
 
   return (
     <View style={styles.task}>
       <View style={styles.taskLeft}>
         <View style={styles.square}></View>
-        <Text style={styles.text}>{props.text}</Text> 
+        <Text style={styles.text}>{props.text}</Text>
       </View>
       <View style={styles.iconsBox}>
         <View style={styles.taskRight}>
@@ -35,15 +54,15 @@ const Task = (props) => {
             </View>
           </TouchableOpacity>
           {reminderTime ? (
-            <Text style={styles.reminderText}>{reminderTime}</Text> 
+            <Text style={styles.reminderText}>{reminderTime}</Text>
           ) : null}
         </View>
         <TouchableOpacity onPress={props.onDelete}>
           <View style={styles.closeBtn}>
             <Image
-            source={require('../../assets/images/Delete-2.png')}
-            style={styles.closeImg}
-          />
+              source={require('../../assets/images/Delete-2.png')}
+              style={styles.closeImg}
+            />
           </View>
         </TouchableOpacity>
       </View>
@@ -56,7 +75,6 @@ const Task = (props) => {
       />
     </View>
   );
-  
 };
 
 const styles = StyleSheet.create({
@@ -111,9 +129,9 @@ const styles = StyleSheet.create({
   notifyImg: {
     width: 17,
     height: 17,
-    padding:5,
+    padding: 5,
   },
-  closeBtn:{
+  closeBtn: {
     justifyContent: 'center',
     alignItems: 'center',
     width: 30,
@@ -134,5 +152,3 @@ const styles = StyleSheet.create({
 });
 
 export default Task;
-
-
