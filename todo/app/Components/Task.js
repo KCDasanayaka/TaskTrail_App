@@ -3,19 +3,12 @@ import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const Task = (props) => {
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false); // Date picker visibility
-  const [reminderTime, setReminderTime] = useState(''); // State to store selected time
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [reminderTime, setReminderTime] = useState('');
 
-  // Function to handle time picker visibility
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
+  const showDatePicker = () => setDatePickerVisibility(true);
+  const hideDatePicker = () => setDatePickerVisibility(false);
 
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  // Function to handle time selection
   const handleConfirm = (date) => {
     const hours = date.getHours();
     const minutes = date.getMinutes();
@@ -23,18 +16,16 @@ const Task = (props) => {
     const formattedTime = `${hours % 12 || 12}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
     setReminderTime(formattedTime);
     hideDatePicker();
-    console.log('Reminder set for:', formattedTime);
   };
 
   return (
     <View style={styles.task}>
       <View style={styles.taskLeft}>
         <View style={styles.square}></View>
-        <Text style={styles.text}>{props.text}</Text>
+        <Text style={styles.text}>{props.text}</Text> 
       </View>
       <View style={styles.iconsBox}>
         <View style={styles.taskRight}>
-          {/* TouchableOpacity to show the time picker */}
           <TouchableOpacity onPress={showDatePicker}>
             <View style={styles.notify}>
               <Image
@@ -43,14 +34,10 @@ const Task = (props) => {
               />
             </View>
           </TouchableOpacity>
-
-          {/* Display the selected reminder time */}
           {reminderTime ? (
-            <Text style={styles.reminderText}>{reminderTime}</Text>
+            <Text style={styles.reminderText}>{reminderTime}</Text> 
           ) : null}
         </View>
-
-        {/* Close Icon with onPress to call the onDelete prop */}
         <TouchableOpacity onPress={props.onDelete}>
           <Image
             source={require('../../assets/images/close.png')}
@@ -58,17 +45,16 @@ const Task = (props) => {
           />
         </TouchableOpacity>
       </View>
-
-      {/* Time picker modal */}
       <DateTimePickerModal
         isVisible={isDatePickerVisible}
         mode="time"
         onConfirm={handleConfirm}
         onCancel={hideDatePicker}
-        is24Hour={false} // For 12-hour format with AM/PM
+        is24Hour={false}
       />
     </View>
   );
+  
 };
 
 const styles = StyleSheet.create({

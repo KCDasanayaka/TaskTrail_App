@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, KeyboardAvoidingView, Platform, TouchableOpacity, Keyboard, TextInput, Image } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import Task from '../Components/Task';
 
 export default function HomeScreen() {
@@ -18,7 +18,7 @@ export default function HomeScreen() {
   // Function to remove a task
   const completeTask = (index) => {
     let itemsCopy = [...taskItems];
-    itemsCopy.splice(index, 1);
+    itemsCopy.splice(index, 1); // Remove task at specific index
     setTaskItems(itemsCopy);
   };
 
@@ -37,14 +37,14 @@ export default function HomeScreen() {
           {/* Dynamically render task items */}
           {taskItems.map((item, index) => (
             <TouchableOpacity key={index}>
-              <Task text={item} onDelete={() => completeTask(index)} /> {/* Pass completeTask as onDelete prop */}
+              <Task text={item} onDelete={() => completeTask(index)} />
             </TouchableOpacity>
           ))}
         </View>
       </View>
 
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.writeTaskWrapper}
       >
         <TextInput
@@ -56,7 +56,7 @@ export default function HomeScreen() {
         <TouchableOpacity onPress={handleAddTask}>
           <View style={styles.addWrapper}>
             <Image
-              source={require('../../assets/images/add.png')} // Path to your image file
+              source={require('../../assets/images/add.png')}
               style={styles.btnImg}
             />
           </View>
@@ -80,8 +80,8 @@ const styles = StyleSheet.create({
     gap: 10,
   },
   image: {
-    width: 30,  // Set your desired width
-    height: 30, // Set your desired height
+    width: 30,
+    height: 30,
   },
   headText: {
     fontSize: 28,
@@ -129,7 +129,6 @@ const styles = StyleSheet.create({
   btnImg: {
     width: 50,
     height: 50,
-    borderRadius:50,
+    borderRadius: 50,
   },
 });
-
