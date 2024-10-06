@@ -29,7 +29,7 @@ const Task = (props) => {
           <TouchableOpacity onPress={showDatePicker}>
             <View style={styles.notify}>
               <Image
-                source={require('../../assets/images/bell.png')}
+                source={require('../../assets/images/Bell-Notification.png')}
                 style={styles.notifyImg}
               />
             </View>
@@ -39,10 +39,12 @@ const Task = (props) => {
           ) : null}
         </View>
         <TouchableOpacity onPress={props.onDelete}>
-          <Image
-            source={require('../../assets/images/close.png')}
+          <View style={styles.closeBtn}>
+            <Image
+            source={require('../../assets/images/Delete-2.png')}
             style={styles.closeImg}
           />
+          </View>
         </TouchableOpacity>
       </View>
       <DateTimePickerModal
@@ -101,19 +103,31 @@ const styles = StyleSheet.create({
     marginRight: 5,
     justifyContent: 'center',
     alignItems: 'center',
+    width: 30,
+    height: 30,
+    borderWidth: 2,
+    borderRadius: 50,
   },
   notifyImg: {
-    width: 25,
-    height: 25,
-    borderWidth: 1,
+    width: 17,
+    height: 17,
+    padding:5,
+  },
+  closeBtn:{
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 30,
+    height: 30,
+    borderWidth: 2,
     borderRadius: 50,
   },
   closeImg: {
-    width: 25,
-    height: 25,
+    width: 15,
+    height: 15,
   },
   reminderText: {
-    marginLeft: 20,
+    marginLeft: 5,
+    marginRight: 10,
     fontSize: 14,
     color: '#555',
   },
