@@ -3,22 +3,20 @@ import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, KeyboardAvo
 import Task from '../Components/Task';
 
 export default function HomeScreen() {
-  const [task, setTask] = useState(''); // Input field state
-  const [taskItems, setTaskItems] = useState([]); // List of tasks
+  const [task, setTask] = useState('');
+  const [taskItems, setTaskItems] = useState([]);
 
-  // Function to add a task to the taskItems array
   const handleAddTask = () => {
-    if (task.trim()) { // Check if task is not empty
+    if (task.trim()) {
       Keyboard.dismiss();
-      setTaskItems([...taskItems, task]); // Add new task
-      setTask(''); // Clear input field
+      setTaskItems([...taskItems, task]);
+      setTask('');
     }
   };
 
-  // Function to remove a task
   const completeTask = (index) => {
     let itemsCopy = [...taskItems];
-    itemsCopy.splice(index, 1); // Remove task at specific index
+    itemsCopy.splice(index, 1);
     setTaskItems(itemsCopy);
   };
 
@@ -26,7 +24,7 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={styles.head}>
         <Image
-          source={require('../../assets/images/to-do.png')} // Path to your image file
+          source={require('../../assets/images/to-do.png')}
           style={styles.image}
         />
         <Text style={styles.headText}>ToDo</Text>
@@ -34,7 +32,6 @@ export default function HomeScreen() {
       <View style={styles.taskWrapper}>
         <Text style={styles.sectionTitle}>Today's tasks</Text>
         <View style={styles.items}>
-          {/* Dynamically render task items */}
           {taskItems.map((item, index) => (
             <TouchableOpacity key={index}>
               <Task text={item} onDelete={() => completeTask(index)} />

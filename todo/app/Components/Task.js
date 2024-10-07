@@ -1,39 +1,48 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import { Notifications } from 'react-native-notifications';
+import * as Notifications from 'expo-notifications';
 
 const Task = (props) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [reminderTime, setReminderTime] = useState('');
-  const [selectedTime, setSelectedTime] = useState(null); // Store selected time
 
   // Show Date Picker
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
 
-  // Handle date confirmation
-  const handleConfirm = (date) => {
+  // Handle date confirmation and schedule notification
+  const handleConfirm = async (date) => {
     const hours = date.getHours();
     const minutes = date.getMinutes();
     const ampm = hours >= 12 ? 'PM' : 'AM';
     const formattedTime = `${hours % 12 || 12}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
     setReminderTime(formattedTime);
-    setSelectedTime(date); // Save selected time
     hideDatePicker();
-    scheduleNotification(date); // Schedule notification after time is set
+
+    // Request notification permissions if not already granted
+    const { status } = await Notifications.requestPermissionsAsync();
+    if (status !== 'granted') {
+      alert('Permission to send notifications is required!');
+      return;
+    }
+
+    // Schedule the notification
+    scheduleNotification(date);
   };
 
-  // Schedule a notification 5 minutes before the reminder time
-  const scheduleNotification = (date) => {
-    const notificationTime = new Date(date.getTime() - 5 * 60 * 1000); // 5 minutes before
+  // Schedule a notification
+  const scheduleNotification = async (date) => {
+    const notificationTime = new Date(date.getTime());
 
-    Notifications.postLocalNotification({
-      title: 'Reminder',
-      body: `You have a task: "${props.text}" due soon!`,
-      id: `reminder-${Date.now()}`, // Unique ID for the notification
-      silent: false,
-      fireDate: notificationTime.toISOString(), // Set the time to trigger the notification
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Reminder',
+        body: `Task: "${props.text}" is due!`,
+      },
+      trigger: {
+        date: notificationTime,
+      },
     });
   };
 
