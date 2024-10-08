@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import * as Notifications from 'expo-notifications';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import Task from '../Components/Task';
 
@@ -6,7 +7,26 @@ export default function HomeScreen() {
   const [task, setTask] = useState('');
   const [taskItems, setTaskItems] = useState([]);
 
-  // Function to add a task to the taskItems array
+  // Create notification channel for Android
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      Notifications.setNotificationChannelAsync('reminder-channel', {
+        name: 'Reminders',
+        importance: Notifications.AndroidImportance.HIGH,
+        sound: 'default',
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
+
+    // Listener to handle notifications when app is running
+    const subscription = Notifications.addNotificationReceivedListener(notification => {
+      console.log('Notification received!', notification);
+    });
+
+    return () => subscription.remove(); // Cleanup on unmount
+  }, []);
+
   const handleAddTask = () => {
     if (task.trim()) {
       Keyboard.dismiss();
@@ -15,11 +35,26 @@ export default function HomeScreen() {
     }
   };
 
-  // Function to remove a task
   const completeTask = (index) => {
     let itemsCopy = [...taskItems];
     itemsCopy.splice(index, 1);
     setTaskItems(itemsCopy);
+  };
+
+  const scheduleNotification = async (taskText) => {
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Reminder',
+        body: `Task: "${taskText}" is due soon!`,
+        sound: 'default',
+      },
+      trigger: {
+        seconds: 5, // Fire after 5 seconds for testing purposes
+        channelId: Platform.OS === 'android' ? 'reminder-channel' : undefined, // Assign channel for Android
+      },
+    });
+
+    console.log('Notification scheduled');
   };
 
   return (
@@ -46,7 +81,12 @@ export default function HomeScreen() {
           value={task}
           onChangeText={text => setTask(text)}
         />
-        <TouchableOpacity onPress={handleAddTask}>
+        <TouchableOpacity onPress={() => {
+          handleAddTask();
+          if (task.trim()) {
+            scheduleNotification(task);
+          }
+        }}>
           <View style={styles.addWrapper}>
             <Image source={require('../../assets/images/add.png')} style={styles.btnImg} />
           </View>
