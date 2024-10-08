@@ -6,6 +6,7 @@ export default function HomeScreen() {
   const [task, setTask] = useState('');
   const [taskItems, setTaskItems] = useState([]);
 
+  // Function to add a task to the taskItems array
   const handleAddTask = () => {
     if (task.trim()) {
       Keyboard.dismiss();
@@ -14,6 +15,7 @@ export default function HomeScreen() {
     }
   };
 
+  // Function to remove a task
   const completeTask = (index) => {
     let itemsCopy = [...taskItems];
     itemsCopy.splice(index, 1);
@@ -23,10 +25,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.head}>
-        <Image
-          source={require('../../assets/images/to-do.png')}
-          style={styles.image}
-        />
+        <Image source={require('../../assets/images/to-do.png')} style={styles.image} />
         <Text style={styles.headText}>ToDo</Text>
       </View>
       <View style={styles.taskWrapper}>
@@ -40,10 +39,7 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.writeTaskWrapper}
-      >
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.writeTaskWrapper}>
         <TextInput
           style={styles.input}
           placeholder={'Write a task'}
@@ -52,10 +48,7 @@ export default function HomeScreen() {
         />
         <TouchableOpacity onPress={handleAddTask}>
           <View style={styles.addWrapper}>
-            <Image
-              source={require('../../assets/images/add.png')}
-              style={styles.btnImg}
-            />
+            <Image source={require('../../assets/images/add.png')} style={styles.btnImg} />
           </View>
         </TouchableOpacity>
       </KeyboardAvoidingView>

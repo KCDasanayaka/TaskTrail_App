@@ -7,11 +7,9 @@ const Task = (props) => {
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const [reminderTime, setReminderTime] = useState('');
 
-  // Show Date Picker
   const showDatePicker = () => setDatePickerVisibility(true);
   const hideDatePicker = () => setDatePickerVisibility(false);
 
-  // Handle date confirmation and schedule notification
   const handleConfirm = async (date) => {
     const hours = date.getHours();
     const minutes = date.getMinutes();
@@ -20,30 +18,35 @@ const Task = (props) => {
     setReminderTime(formattedTime);
     hideDatePicker();
 
-    // Request notification permissions if not already granted
-    const { status } = await Notifications.requestPermissionsAsync();
+    // Request notification permissions
+    const { status } = await Notifications.getPermissionsAsync();
     if (status !== 'granted') {
-      alert('Permission to send notifications is required!');
-      return;
+      const permissionResponse = await Notifications.requestPermissionsAsync();
+      if (permissionResponse.status !== 'granted') {
+        alert('Permission to send notifications is required!');
+        return;
+      }
     }
 
     // Schedule the notification
     scheduleNotification(date);
   };
 
-  // Schedule a notification
   const scheduleNotification = async (date) => {
-    const notificationTime = new Date(date.getTime());
+    // Calculate the trigger time (in seconds)
+    const trigger = date.getTime() / 1000; // Convert to seconds
 
     await Notifications.scheduleNotificationAsync({
       content: {
         title: 'Reminder',
-        body: `Task: "${props.text}" is due!`,
+        body: `Task: "${props.text}" is due soon!`,
       },
       trigger: {
-        date: notificationTime,
+        seconds: trigger - Math.floor(Date.now() / 1000), // Calculate seconds from now
       },
     });
+
+    console.log('Notification scheduled for', reminderTime);
   };
 
   return (

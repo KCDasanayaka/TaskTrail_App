@@ -16,6 +16,10 @@
       "supportsTablet": true
     },
     "android": {
+      "permissions": [
+        "VIBRATE",
+        "RECEIVE_BOOT_COMPLETED"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ToDo.png",
         "backgroundColor": "#ffffff"
