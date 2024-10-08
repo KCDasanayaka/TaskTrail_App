@@ -33,26 +33,34 @@ const Task = (props) => {
   };
 
   const scheduleNotification = async (date) => {
-    // Calculate the trigger time (in seconds)
     const trigger = date.getTime() / 1000; // Convert to seconds
-
     await Notifications.scheduleNotificationAsync({
       content: {
         title: 'Reminder',
         body: `Task: "${props.text}" is due soon!`,
       },
       trigger: {
-        seconds: trigger - Math.floor(Date.now() / 1000), // Calculate seconds from now
+        seconds: trigger - Math.floor(Date.now() / 1000),
       },
     });
-
     console.log('Notification scheduled for', reminderTime);
   };
 
   return (
     <View style={styles.task}>
       <View style={styles.taskLeft}>
-        <View style={styles.square}></View>
+        <View style={styles.square}>
+          <TouchableOpacity onPress={props.onToggleImportant}>
+            <Image
+              source={
+                props.isImportant
+                  ? require('../../assets/images/Important-fill.png')
+                  : require('../../assets/images/Important.png')
+              }
+              style={styles.impo}
+            />
+          </TouchableOpacity>
+        </View>
         <Text style={styles.text}>{props.text}</Text>
       </View>
       <View style={styles.iconsBox}>
@@ -109,12 +117,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   square: {
-    width: 24,
-    height: 24,
-    backgroundColor: '#55bcf6',
-    opacity: 0.4,
-    borderRadius: 5,
-    marginRight: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 5,
+  },
+  impo: {
+    width: 20,
+    height: 20,
   },
   text: {
     maxWidth: '80%',
