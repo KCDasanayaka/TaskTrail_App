@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {
   View,
@@ -11,23 +11,54 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Keyboard,
+  Alert,
 } from 'react-native';
 import { Agenda } from 'react-native-calendars';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 export default function Calendars() {
-  const [items, setItems] = useState({}); // Remove default data
-  const [selectedDate, setSelectedDate] = useState(null); // Track selected date
-  const [taskTitle, setTaskTitle] = useState(''); // Track input for title
-  const [taskDescription, setTaskDescription] = useState(''); // Track input for description
+  const [items, setItems] = useState({});
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [taskTitle, setTaskTitle] = useState('');
+  const [taskDescription, setTaskDescription] = useState('');
+
+  // Load tasks from AsyncStorage when the app starts
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  // Save tasks to AsyncStorage when items are updated
+  useEffect(() => {
+    saveTasks();
+  }, [items]);
+
+  // Function to load tasks from AsyncStorage
+  const loadTasks = async () => {
+    try {
+      const storedItems = await AsyncStorage.getItem('tasks');
+      if (storedItems) {
+        setItems(JSON.parse(storedItems)); // Parse and set saved items
+      }
+    } catch (error) {
+      console.error('Failed to load tasks:', error);
+    }
+  };
+
+  // Function to save tasks to AsyncStorage
+  const saveTasks = async () => {
+    try {
+      await AsyncStorage.setItem('tasks', JSON.stringify(items)); // Save items as a JSON string
+    } catch (error) {
+      console.error('Failed to save tasks:', error);
+    }
+  };
 
   // Function to handle adding a task to the selected date
   const handleAddTask = () => {
-    // Check if the title and description are not empty
     if (!taskTitle.trim() || !taskDescription.trim() || !selectedDate) return;
 
     const newTask = { name: taskTitle, data: taskDescription };
 
-    // Add the new task to the selected date in the items object
     const updatedItems = { ...items };
     if (updatedItems[selectedDate]) {
       updatedItems[selectedDate].push(newTask); // Add to existing date
@@ -67,7 +98,6 @@ export default function Calendars() {
             <Text style={styles.itemDescription}>{item.data}</Text>
           </TouchableOpacity>
         )}
-        // Only display tasks for the selected date
         renderEmptyData={() => {
           if (selectedDate) {
             return <Text style={styles.noTasksText}>No tasks for this date.</Text>;
@@ -76,7 +106,6 @@ export default function Calendars() {
         }}
       />
 
-      {/* Only show inputs if a date is selected */}
       {selectedDate && (
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -116,7 +145,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#f0f0f0',
-    paddingHorizontal:5,
+    paddingHorizontal: 5,
   },
   topBox: {
     flexDirection: 'row',
