@@ -1,32 +1,65 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
 import Task from '../Components/Task';
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 
 export default function HomeScreen() {
-  const [task, setTask] = useState(''); 
+  const [task, setTask] = useState('');
   const [taskItems, setTaskItems] = useState([]);
 
-  // Function to add a task to the taskItems array
-  const handleAddTask = () => {
-    if (task.trim()) {
-      Keyboard.dismiss();
-      setTaskItems([...taskItems, { text: task, isImportant: false }]);
-      setTask(''); 
+  // Load tasks from AsyncStorage when the component mounts
+  useEffect(() => {
+    loadTasks();
+  }, []);
+
+  // Load tasks from AsyncStorage
+  const loadTasks = async () => {
+    try {
+      const storedItems = await AsyncStorage.getItem('tasks');
+      if (storedItems) {
+        const tasks = JSON.parse(storedItems);
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+        const todayTasks = tasks[today] || []; // Get tasks for today
+        setTaskItems(todayTasks);
+      }
+    } catch (error) {
+      console.error('Failed to load tasks:', error);
     }
   };
 
-  // Function to toggle priority for a task
-  const toggleImportant = (index) => {
-    let itemsCopy = [...taskItems];
-    itemsCopy[index].isImportant = !itemsCopy[index].isImportant;
-    setTaskItems(itemsCopy);
+  // Function to add a task to the taskItems array
+  const handleAddTask = async () => {
+    if (task.trim()) {
+      Keyboard.dismiss();
+      const newTask = { text: task, isImportant: false };
+      const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+
+      // Update the tasks in AsyncStorage
+      const storedItems = await AsyncStorage.getItem('tasks');
+      const tasks = storedItems ? JSON.parse(storedItems) : {};
+      if (!tasks[today]) {
+        tasks[today] = [];
+      }
+      tasks[today].push(newTask);
+      await AsyncStorage.setItem('tasks', JSON.stringify(tasks)); // Save updated tasks
+
+      setTaskItems([...taskItems, newTask]); // Update the local state
+      setTask(''); // Clear input field
+    }
   };
 
   // Function to remove a task
-  const completeTask = (index) => {
+  const completeTask = async (index) => {
     let itemsCopy = [...taskItems];
-    itemsCopy.splice(index, 1); 
-    setTaskItems(itemsCopy);
+    itemsCopy.splice(index, 1); // Remove task at specific index
+
+    const today = new Date().toISOString().split('T')[0]; // Get today's date
+    const storedItems = await AsyncStorage.getItem('tasks');
+    const tasks = storedItems ? JSON.parse(storedItems) : {};
+    tasks[today] = itemsCopy; // Update today's tasks
+    await AsyncStorage.setItem('tasks', JSON.stringify(tasks)); // Save updated tasks
+
+    setTaskItems(itemsCopy); // Update local state
   };
 
   // Sort tasks by importance (important tasks will appear at the top)

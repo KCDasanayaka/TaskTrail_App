@@ -10,7 +10,6 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Keyboard,
-  Alert,
 } from 'react-native';
 import { Agenda } from 'react-native-calendars';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -118,10 +117,7 @@ export default function Calendars() {
     <SafeAreaView style={styles.container}>
       <View style={styles.topBox}>
         <View style={styles.head}>
-          <Image
-            source={require('../../assets/images/to-do.png')}
-            style={styles.image}
-          />
+          <Image source={require('../../assets/images/to-do.png')} style={styles.image} />
           <Text style={styles.headText}>ToDo</Text>
         </View>
       </View>
@@ -154,10 +150,7 @@ export default function Calendars() {
       />
 
       {selectedDate && (
-        <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          style={styles.writeTaskWrapper}
-        >
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.writeTaskWrapper}>
           <View style={styles.calInput}>
             <View style={styles.calLeft}>
               <TextInput
@@ -177,22 +170,14 @@ export default function Calendars() {
               <View style={styles.taskRight}>
                 <TouchableOpacity onPress={showDatePicker}>
                   <View style={styles.notify}>
-                    <Image
-                      source={require('../../assets/images/Bell-Notification.png')}
-                      style={styles.notifyImg}
-                    />
+                    <Image source={require('../../assets/images/Bell-Notification.png')} style={styles.notifyImg} />
                   </View>
                 </TouchableOpacity>
-                {reminderTime ? (
-                  <Text style={styles.reminderText}>{reminderTime}</Text>
-                ) : null}
+                {reminderTime ? <Text style={styles.reminderText}>{reminderTime}</Text> : null}
               </View>
               <TouchableOpacity onPress={handleAddTask}>
                 <View style={styles.addWrapper}>
-                  <Image
-                    source={require('../../assets/images/add.png')}
-                    style={styles.btnImg}
-                  />
+                  <Image source={require('../../assets/images/add.png')} style={styles.btnImg} />
                 </View>
               </TouchableOpacity>
             </View>
@@ -271,11 +256,11 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
   },
-  calRight:{
-    flexDirection:'column',
-    alignItems:'center',
-    justifyContent:'space-between',
-    gap:5,
+  calRight: {
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 5,
   },
   addWrapper: {
     width: 40,
@@ -284,7 +269,7 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical:5
+    marginVertical: 5,
   },
   calInput: {
     flex: 1,
@@ -309,8 +294,8 @@ const styles = StyleSheet.create({
   taskRight: {
     flexDirection: 'column',
     alignItems: 'center',
-    justifyContent:'center',
-    marginVertical:5
+    justifyContent: 'center',
+    marginVertical: 5,
   },
   notify: {
     paddingVertical: 5,
@@ -320,44 +305,22 @@ const styles = StyleSheet.create({
     height: 40,
     backgroundColor: '#fff',
     borderRadius: 25,
-    borderColor:'#000',
-    borderWidth:3,
+    borderColor: '#000',
+    borderWidth: 3,
   },
   notifyImg: {
     width: 17,
     height: 17,
-  },
-  item: {
-    backgroundColor: 'lightblue',
-    marginHorizontal: 10,
-    padding: 10,
-    marginTop: 25,
-    borderRadius: 5,
   },
   taskContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  taskContent: {
-    flex: 1,
-  },
-  itemTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  itemDescription: {
-    fontSize: 14,
-    color: '#888',
-    marginVertical: 5,
-  },
   reminderTimeText: {
     fontSize: 12,
     fontWeight: '600',
     color: '#ff0000',
     textAlign: 'right',
-  },
-  reminderText:{
-    fontSize:10,
   },
 });
