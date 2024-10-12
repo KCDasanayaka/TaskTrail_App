@@ -15,6 +15,8 @@ import {
 } from 'react-native';
 import { Agenda } from 'react-native-calendars';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+import * as Notifications from 'expo-notifications';
 
 export default function Calendars() {
   const [items, setItems] = useState({});
@@ -72,6 +74,48 @@ export default function Calendars() {
     Keyboard.dismiss(); // Dismiss the keyboard after adding the task
   };
 
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [reminderTime, setReminderTime] = useState('');
+
+  const showDatePicker = () => setDatePickerVisibility(true);
+  const hideDatePicker = () => setDatePickerVisibility(false);
+
+  const handleConfirm = async (date) => {
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedTime = `${hours % 12 || 12}:${minutes < 10 ? '0' : ''}${minutes} ${ampm}`;
+    setReminderTime(formattedTime);
+    hideDatePicker();
+
+    // Request notification permissions
+    const { status } = await Notifications.getPermissionsAsync();
+    if (status !== 'granted') {
+      const permissionResponse = await Notifications.requestPermissionsAsync();
+      if (permissionResponse.status !== 'granted') {
+        alert('Permission to send notifications is required!');
+        return;
+      }
+    }
+
+    // Schedule the notification
+    scheduleNotification(date);
+  };
+
+  const scheduleNotification = async (date) => {
+    const trigger = date.getTime() / 1000; // Convert to seconds
+    await Notifications.scheduleNotificationAsync({
+      content: {
+        title: 'Reminder',
+        body: `Task: "${props.text}" is due soon!`,
+      },
+      trigger: {
+        seconds: trigger - Math.floor(Date.now() / 1000),
+      },
+    });
+    console.log('Notification scheduled for', reminderTime);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.topBox}>
@@ -126,14 +170,30 @@ export default function Calendars() {
                 onChangeText={text => setTaskDescription(text)}
               />
             </View>
-            <TouchableOpacity onPress={handleAddTask}>
-              <View style={styles.addWrapper}>
-                <Image
-                  source={require('../../assets/images/add.png')}
-                  style={styles.btnImg}
-                />
-              </View>
-            </TouchableOpacity>
+            <View style={styles.calRight}>
+              <TouchableOpacity onPress={handleAddTask}>
+              <View style={styles.taskRight}>
+                  <TouchableOpacity onPress={showDatePicker}>
+                    <View style={styles.notify}>
+                      <Image
+                        source={require('../../assets/images/Bell-Notification.png')}
+                        style={styles.notifyImg}
+                      />
+                    </View>
+                  </TouchableOpacity>
+                  {reminderTime ? (
+                    <Text style={styles.reminderText}>{reminderTime}</Text>
+                  ) : null}
+                </View>
+                <View style={styles.addWrapper}>
+                  <Image
+                    source={require('../../assets/images/add.png')}
+                    style={styles.btnImg}
+                  />
+                </View>
+              </TouchableOpacity>
+            </View>
+            
           </View>
         </KeyboardAvoidingView>
       )}
@@ -200,9 +260,15 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginRight: 10,
   },
+  calRight:{
+    flexDirection:'column',
+    alignItems:'center',
+    justifyContent:'space-between',
+    gap:5,
+  },
   addWrapper: {
-    width: 50,
-    height: 50,
+    width: 40,
+    height: 40,
     backgroundColor: '#fff',
     borderRadius: 25,
     justifyContent: 'center',
@@ -211,7 +277,7 @@ const styles = StyleSheet.create({
   calInput: {
     flex: 1,
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
   },
   calLeft: {
     flexDirection: 'column',
@@ -227,5 +293,29 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     padding: 20,
     color: 'gray',
+  },
+  taskRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent:'center',
+    
+
+  },
+  notify: {
+    paddingVertical: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: 40,
+    height: 40,
+    backgroundColor: '#fff',
+    borderRadius: 25,
+    borderColor:'#000',
+    borderWidth:3,
+    gap:2
+  },
+  notifyImg: {
+    width: 17,
+    height: 17,
+    padding: 5,
   },
 });
