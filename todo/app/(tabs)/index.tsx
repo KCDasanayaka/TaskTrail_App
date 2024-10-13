@@ -82,8 +82,11 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.head}>
-        <Image source={require('../../assets/images/to-do.png')} style={styles.image} />
-        <Text style={styles.headText}>ToDo</Text>
+        <View style={styles.logoContainer}>
+          <Image source={require('../../assets/images/clipboard.png')} style={styles.image} />
+        </View>
+        
+        <Text style={styles.headText}>MyReminder</Text>
       </View>
       <View style={styles.taskWrapper}>
         <Text style={styles.sectionTitle}>Today's tasks</Text>
@@ -128,15 +131,19 @@ const styles = StyleSheet.create({
   },
   head: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     justifyContent: 'center',
     marginTop: 45,
     width: '100%',
     gap: 10,
   },
+  logoContainer:{
+    padding:5,
+  },
   image: {
     width: 30,
     height: 30,
+    resizeMode:'cover'
   },
   headText: {
     fontSize: 28,
