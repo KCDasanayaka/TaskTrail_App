@@ -1,65 +1,79 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, KeyboardAvoidingView, Platform, Keyboard } from 'react-native';
-import Task from '../Components/Task';
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
+import Task from '../Components/Task';
+
 
 export default function HomeScreen() {
-  const [task, setTask] = useState('');
   const [taskItems, setTaskItems] = useState([]);
+  const [task, setTask] = useState('');
 
-  // Load tasks from AsyncStorage when the component mounts
+  // Load today's tasks from AsyncStorage
   useEffect(() => {
-    loadTasks();
+    loadTasksForToday(); // Load tasks when the component mounts
   }, []);
 
-  // Load tasks from AsyncStorage
-  const loadTasks = async () => {
+  const loadTasksForToday = async () => {
     try {
       const storedItems = await AsyncStorage.getItem('tasks');
       if (storedItems) {
         const tasks = JSON.parse(storedItems);
         const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-        const todayTasks = tasks[today] || []; // Get tasks for today
-        setTaskItems(todayTasks);
+        const todayTasks = tasks[today] || []; // Get today's tasks
+        setTaskItems(todayTasks); // Update state with today's tasks
       }
     } catch (error) {
       console.error('Failed to load tasks:', error);
     }
   };
 
-  // Function to add a task to the taskItems array
+  // Function to add a task to the taskItems array for today
   const handleAddTask = async () => {
     if (task.trim()) {
       Keyboard.dismiss();
       const newTask = { text: task, isImportant: false };
-      const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
 
-      // Update the tasks in AsyncStorage
-      const storedItems = await AsyncStorage.getItem('tasks');
-      const tasks = storedItems ? JSON.parse(storedItems) : {};
-      if (!tasks[today]) {
-        tasks[today] = [];
+      const today = new Date().toISOString().split('T')[0]; // Get today's date
+      const updatedItems = [...taskItems, newTask]; // Add new task
+      setTaskItems(updatedItems); // Update state with new task
+
+      // Save tasks to AsyncStorage
+      try {
+        const storedItems = await AsyncStorage.getItem('tasks');
+        const tasks = storedItems ? JSON.parse(storedItems) : {};
+        tasks[today] = updatedItems; // Update today's tasks in storage
+        await AsyncStorage.setItem('tasks', JSON.stringify(tasks)); // Save updated tasks
+      } catch (error) {
+        console.error('Failed to save tasks:', error);
       }
-      tasks[today].push(newTask);
-      await AsyncStorage.setItem('tasks', JSON.stringify(tasks)); // Save updated tasks
 
-      setTaskItems([...taskItems, newTask]); // Update the local state
       setTask(''); // Clear input field
     }
+  };
+
+  // Function to toggle priority for a task
+  const toggleImportant = (index) => {
+    let itemsCopy = [...taskItems];
+    itemsCopy[index].isImportant = !itemsCopy[index].isImportant;
+    setTaskItems(itemsCopy);
   };
 
   // Function to remove a task
   const completeTask = async (index) => {
     let itemsCopy = [...taskItems];
     itemsCopy.splice(index, 1); // Remove task at specific index
+    setTaskItems(itemsCopy);
 
-    const today = new Date().toISOString().split('T')[0]; // Get today's date
-    const storedItems = await AsyncStorage.getItem('tasks');
-    const tasks = storedItems ? JSON.parse(storedItems) : {};
-    tasks[today] = itemsCopy; // Update today's tasks
-    await AsyncStorage.setItem('tasks', JSON.stringify(tasks)); // Save updated tasks
-
-    setTaskItems(itemsCopy); // Update local state
+    // Update AsyncStorage after removing a task
+    try {
+      const today = new Date().toISOString().split('T')[0]; // Get today's date
+      const storedItems = await AsyncStorage.getItem('tasks');
+      const tasks = storedItems ? JSON.parse(storedItems) : {};
+      tasks[today] = itemsCopy; // Update today's tasks in storage
+      await AsyncStorage.setItem('tasks', JSON.stringify(tasks)); // Save updated tasks
+    } catch (error) {
+      console.error('Failed to update tasks:', error);
+    }
   };
 
   // Sort tasks by importance (important tasks will appear at the top)
@@ -103,6 +117,9 @@ export default function HomeScreen() {
     </View>
   );
 }
+
+// Add your styles here...
+
 
 const styles = StyleSheet.create({
   container: {

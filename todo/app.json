@@ -13,12 +13,18 @@
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.yourname.todo", 
+      "infoPlist": {
+        "NSCameraUsageDescription": "This app uses the camera to take photos.",
+        "NSPhotoLibraryUsageDescription": "This app needs access to your photo library."
+      }
     },
     "android": {
       "permissions": [
         "VIBRATE",
-        "RECEIVE_BOOT_COMPLETED"
+        "RECEIVE_BOOT_COMPLETED",
+        "NOTIFICATION" 
       ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/ToDo.png",
@@ -31,7 +37,7 @@
       "favicon": "./assets/images/To-Do1.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router" 
     ],
     "experiments": {
       "typedRoutes": true
