@@ -3,7 +3,6 @@ import { View, StyleSheet, Text, TouchableOpacity, TextInput, Image, KeyboardAvo
 import AsyncStorage from '@react-native-async-storage/async-storage'; // Import AsyncStorage
 import Task from '../Components/Task';
 
-
 export default function HomeScreen() {
   const [taskItems, setTaskItems] = useState([]);
   const [task, setTask] = useState('');
@@ -20,7 +19,7 @@ export default function HomeScreen() {
         const tasks = JSON.parse(storedItems);
         const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
         const todayTasks = tasks[today] || []; // Get today's tasks
-        setTaskItems(todayTasks); // Update state with today's tasks
+        setTaskItems(todayTasks.map(task => ({ text: task.name, reminderTime: task.reminderTime, isImportant: false }))); // Map tasks to desired format
       }
     } catch (error) {
       console.error('Failed to load tasks:', error);
@@ -83,10 +82,8 @@ export default function HomeScreen() {
     <View style={styles.container}>
       <View style={styles.head}>
         <View style={styles.logoContainer}>
-          <Image source={require('../../assets/images/clipboard.png')} style={styles.image} />
+          <Image source={require('../../assets/images/MyReminder.png')} style={styles.image} />
         </View>
-        
-        <Text style={styles.headText}>MyReminder</Text>
       </View>
       <View style={styles.taskWrapper}>
         <Text style={styles.sectionTitle}>Today's tasks</Text>
@@ -96,6 +93,7 @@ export default function HomeScreen() {
               <Task
                 text={item.text}
                 isImportant={item.isImportant}
+                reminderTime={item.reminderTime} // Pass the reminder time
                 onToggleImportant={() => toggleImportant(index)}
                 onDelete={() => completeTask(index)}
               />
@@ -122,12 +120,11 @@ export default function HomeScreen() {
 }
 
 // Add your styles here...
-
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#e8eaed',
+    color:'#000'
   },
   head: {
     flexDirection: 'row',
@@ -141,8 +138,8 @@ const styles = StyleSheet.create({
     padding:5,
   },
   image: {
-    width: 30,
-    height: 30,
+    width: 167.8,
+    height: 28.4,
     resizeMode:'cover'
   },
   headText: {
@@ -160,6 +157,9 @@ const styles = StyleSheet.create({
   },
   items: {
     marginTop: 30,
+  },
+  text:{
+    color:'#000'
   },
   writeTaskWrapper: {
     position: 'absolute',

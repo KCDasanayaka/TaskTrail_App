@@ -20,8 +20,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#f0f0f0', // Optional background color
   },
   image:{
-    width:335.6,
-    height:56.8,
+    width:251.7,
+    height:42.6,
     resizeMode:'cover',
 
   }

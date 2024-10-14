@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -10,13 +10,11 @@ import {
   TextInput,
   KeyboardAvoidingView,
   Keyboard,
-  Animated,
 } from 'react-native';
 import { Agenda } from 'react-native-calendars';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import * as Notifications from 'expo-notifications';
-import { Swipeable, GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function Calendars() {
   const [items, setItems] = useState({});
@@ -57,7 +55,7 @@ export default function Calendars() {
     if (!taskTitle.trim() || !taskDescription.trim() || !selectedDate || !reminderTime) return;
 
     const newTask = {
-      id: Math.random().toString(),  // Add an ID for identifying each task
+      id: Math.random().toString(), // Add an ID for identifying each task
       name: taskTitle,
       description: taskDescription,
       reminderTime: reminderTime,
@@ -114,127 +112,93 @@ export default function Calendars() {
     console.log('Notification scheduled for', reminderTime);
   };
 
-  // Function to delete a task
-  const handleDeleteTask = (taskId) => {
-    const updatedItems = { ...items };
-    if (updatedItems[selectedDate]) {
-      updatedItems[selectedDate] = updatedItems[selectedDate].filter(task => task.id !== taskId);
-      if (updatedItems[selectedDate].length === 0) {
-        delete updatedItems[selectedDate]; // Remove the date if no tasks remain
-      }
-      setItems(updatedItems); // Update the state
-    }
-  };
-
-  // Swipeable task item
-  const TaskItem = ({ item }) => {
-    const renderRightActions = () => {
-      return (
-        <View style={styles.deleteButtonContainer}>
-          <Text style={styles.deleteText}>Delete</Text>
-        </View>
-      );
-    };
-
-    return (
-      <Swipeable
-        renderRightActions={renderRightActions}
-        onSwipeableRightOpen={() => handleDeleteTask(item.id)} // Delete task when swiped
-        overshootRight={false}
-      >
-        <TouchableOpacity style={styles.item}>
-          <View style={styles.taskContainer}>
-            <View style={styles.taskContent}>
-              <Text style={styles.itemTitle}>{item.name}</Text>
-              <Text style={styles.itemDescription}>{item.description}</Text>
-            </View>
-            <Text style={styles.reminderTimeText}>{item.reminderTime}</Text>
-          </View>
-        </TouchableOpacity>
-      </Swipeable>
-    );
-  };
-
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.topBox}>
-          <View style={styles.head}>
-            <Image source={require('../../assets/images/to-do.png')} style={styles.image} />
-            <Text style={styles.headText}>ToDo</Text>
-          </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.topBox}>
+        <View style={styles.head}>
+          <Image source={require('../../assets/images/MyReminder.png')} style={styles.image} />
         </View>
-
-        <Agenda
-          items={items}
-          selected={selectedDate}
-          onDayPress={(day) => {
-            setSelectedDate(day.dateString); // Update selected date
-            setTaskTitle(''); // Reset task fields
-            setTaskDescription('');
-            Keyboard.dismiss();
-          }}
-          renderItem={(item) => <TaskItem item={item} />}
-          renderEmptyData={() => {
-            if (selectedDate) {
-              return <Text style={styles.noTasksText}>No tasks for this date.</Text>;
-            }
-            return null;
-          }}
-        />
-
-        {selectedDate && (
-          <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.writeTaskWrapper}>
-            <View style={styles.calInput}>
-              <View style={styles.calLeft}>
-                <TextInput
-                  style={styles.input}
-                  placeholder={'Enter Task Title'}
-                  value={taskTitle}
-                  onChangeText={text => setTaskTitle(text)}
-                />
-                <TextInput
-                  style={styles.input}
-                  placeholder={'Enter Task Description'}
-                  value={taskDescription}
-                  onChangeText={text => setTaskDescription(text)}
-                />
+      </View>
+      <Agenda
+        items={items}
+        selected={selectedDate}
+        onDayPress={(day) => {
+          setSelectedDate(day.dateString); // Update selected date
+          setTaskTitle(''); // Reset task fields
+          setTaskDescription('');
+          Keyboard.dismiss();
+        }}
+        renderItem={(item) => (
+          <TouchableOpacity style={styles.item}>
+            <View style={styles.taskContainer}>
+              <View style={styles.taskContent}>
+                <Text style={styles.itemTitle}>{item.name}</Text>
+                <Text style={styles.itemDescription}>{item.description}</Text>
               </View>
-              <View style={styles.calRight}>
-                <View style={styles.taskRight}>
-                  <TouchableOpacity onPress={showDatePicker}>
-                    <View style={styles.notify}>
-                      <Image
-                        source={require('../../assets/images/Bell-Notification.png')}
-                        style={styles.notifyImg}
-                      />
-                    </View>
-                  </TouchableOpacity>
-                  {reminderTime ? (
-                    <Text style={styles.reminderText}>{reminderTime}</Text>
-                  ) : null}
-                </View>
-                <TouchableOpacity onPress={handleAddTask}>
-                  <View style={styles.addWrapper}>
-                    <Image source={require('../../assets/images/add.png')} style={styles.btnImg} />
+              <Text style={styles.reminderTimeText}>{item.reminderTime}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+        renderEmptyData={() => {
+          if (selectedDate) {
+            return <Text style={styles.noTasksText}>No tasks for this date.</Text>;
+          }
+          return null;
+        }}
+      />
+
+      {selectedDate && (
+        <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.writeTaskWrapper}>
+          <View style={styles.calInput}>
+            <View style={styles.calLeft}>
+              <TextInput
+                style={styles.input}
+                placeholder={'Enter Task Title'}
+                value={taskTitle}
+                onChangeText={text => setTaskTitle(text)}
+              />
+              <TextInput
+                style={styles.input}
+                placeholder={'Enter Task Description'}
+                value={taskDescription}
+                onChangeText={text => setTaskDescription(text)}
+              />
+            </View>
+            <View style={styles.calRight}>
+              <View style={styles.taskRight}>
+                <TouchableOpacity onPress={showDatePicker}>
+                  <View style={styles.notify}>
+                    <Image
+                      source={require('../../assets/images/Bell-Notification.png')}
+                      style={styles.notifyImg}
+                    />
                   </View>
                 </TouchableOpacity>
+                {reminderTime ? (
+                  <Text style={styles.reminderText}>{reminderTime}</Text>
+                ) : null}
               </View>
+              <TouchableOpacity onPress={handleAddTask}>
+                <View style={styles.addWrapper}>
+                  <Image source={require('../../assets/images/add.png')} style={styles.btnImg} />
+                </View>
+              </TouchableOpacity>
             </View>
-          </KeyboardAvoidingView>
-        )}
+          </View>
+        </KeyboardAvoidingView>
+      )}
 
-        <DateTimePickerModal
-          isVisible={isDatePickerVisible}
-          mode="time"
-          onConfirm={handleConfirm}
-          onCancel={hideDatePicker}
-          is24Hour={false}
-        />
-      </SafeAreaView>
-    </GestureHandlerRootView>
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="time"
+        onConfirm={handleConfirm}
+        onCancel={hideDatePicker}
+        is24Hour={false}
+      />
+    </SafeAreaView>
   );
 }
+
 
 // Your styles...
 const styles = StyleSheet.create({
@@ -277,8 +241,8 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   image: {
-    width: 40,
-    height: 40,
+    width: 167.8,
+    height: 28.4,
     marginRight: 10,
   },
   headText: {
