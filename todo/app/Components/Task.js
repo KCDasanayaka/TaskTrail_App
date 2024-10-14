@@ -54,8 +54,8 @@ const Task = (props) => {
             <Image
               source={
                 props.isImportant
-                  ? require('../../assets/images/Important-fill.png')
-                  : require('../../assets/images/Important.png')
+                  ? require('../../assets/images/Star-Fill.png')
+                  : require('../../assets/images/Star.png')
               }
               style={styles.impo}
             />
